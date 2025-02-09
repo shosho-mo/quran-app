@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق لحفظ القرآن الكريم</title>
+    <link rel="icon" type="image/x-icon" href="https://cdn.arabsstock.com/uploads/images/98830/image-98830-3d-illustration-holy-quran-wooden-stand-worship-closeness--search_large.jpg">
+<header class="header">
+    <h1>📖 تطبيق حفظ القرآن الكريم</h1>
+</header>
+
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background: url('https://th.bing.com/th/id/R.a0b057e83a341e92941b9f2c494c6ab1?rik=Gipv1723q%2blVYQ&riu=http%3a%2f%2fwww.mexatk.com%2fwp-content%2fuploads%2f2015%2f12%2f%d8%b5%d9%88%d8%b1-%d8%b9%d9%86-%d8%a7%d9%84%d9%83%d8%b9%d8%a8%d8%a9-1.jpg&ehk=i5lVrhWSOLhGtJt5iK9T2H826pjn%2bhRLX2ssjOPMSYk%3d&risl=&pid=ImgRaw&r=0') no-repeat center center fixed;
+    background-size: cover;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.header {
+    background: linear-gradient(to right, #383b3f, #554deb);
+    color: white;
+    text-align: center;
+    padding: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+
+.container {
+    background: rgba(255, 255, 255, 0.85); /* خلفية شفافة قليلاً */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    width: 300px;
+    color: black;
+}
+
+select, input, button {
+    width: 97%;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+button {
+    background: #3b82f6;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+}
+
+button:hover {
+    background: #2563eb;
+}
+
+audio {
+    width: 100%;
+    margin-top: 10px;
+}
+.footer {
+    background: linear-gradient(to right, #3b82f6, #4f46e5); /* تدرج ألوان أنيق */
+    color: white;
+    text-align: center;
+    padding: 15px;
+    font-size: 14px;
+    font-weight: bold;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+}
+#contact {
+    width: 10%;
+    position: relative;
+    margin-top: 300px; /* يضيف مسافة بين الفوتر وباقي المحتوى */
+}
+
+.footer {
+    background: linear-gradient(to right, #3b82f6, #4f46e5);
+    color: white;
+    text-align: center;
+    padding: 15px;
+    font-size: 14px;
+    font-weight: bold;
+    width: 50%;
+    box-shadow: 5 -2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.footer p {
+    margin: 0;
+    direction: rtl; /* دعم الاتجاه العربي */
+}
+
+    </style>
+</head>
+
+<body><section><div class="container">
+    <h2> صديقك لحفظ واتقان القرآن الكريم</h2>
+
+    <select id="surah"></select>
+    <input type="number" id="ayah" placeholder="رقم الآية" min="1">
+    <input type="number" id="repeat" placeholder="عدد التكرارات" min="1" value="1">
+    <button onclick="playAyah()">🔊 تشغيل</button>
+
+    <audio id="audioPlayer" controls></audio>
+</div>
+</section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch("https://api.alquran.cloud/v1/surah")
+                .then(response => response.json())
+                .then(data => {
+                    const surahSelect = document.getElementById("surah");
+                    data.data.forEach(surah => {
+                        let option = document.createElement("option");
+                        option.value = surah.number;
+                        option.textContent = `${surah.englishName} (${surah.name})`;
+                        surahSelect.appendChild(option);
+                    });
+                });
+        });
+
+        function playAyah() {
+            let surah = document.getElementById("surah").value;
+            let ayah = document.getElementById("ayah").value;
+            let repeatCount = document.getElementById("repeat").value;
+            let audioPlayer = document.getElementById("audioPlayer");
+
+            fetch(`https://api.alquran.cloud/v1/ayah/${surah}:${ayah}/ar.alafasy`)
+                .then(response => response.json())
+                .then(data => {
+                    audioPlayer.src = data.data.audio;
+                    audioPlayer.play();
+
+                    let count = 1;
+                    audioPlayer.onended = function () {
+                        if (count < repeatCount) {
+                            count++;
+                            audioPlayer.play();
+                        }
+                    };
+                })
+                .catch(error => console.error("حدث خطأ:", error));
+        }
+    </script>
+    <section id="contact">
+        <footer class="footer">
+            <p>© 2025 جميع الحقوق محفوظة <br> BY: Shrouk Mohamed  </p>
+        </footer>
+    </section>
+
+</body>
+
+</html>
